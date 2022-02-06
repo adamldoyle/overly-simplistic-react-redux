@@ -1,4 +1,4 @@
-import { createContext, useRef, PropsWithChildren, useCallback } from 'react';
+import { createContext, useRef, PropsWithChildren } from 'react';
 import { IStore, Reducer } from './types';
 
 export type IReduxContext<StateType> = {
