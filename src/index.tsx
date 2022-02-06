@@ -1,17 +1,47 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { ReduxContextProvider } from './redux/context';
+import { Reducer } from './redux/types';
+import { IRootState } from './types';
+
+const initialState: IRootState = {
+  allNodes: {},
+  rootNodes: [],
+};
+
+const getNextId = (state: IRootState, prefix: string): string => {
+  let i = 0;
+  do {
+    i++;
+  } while (state.allNodes[`${prefix}-${i}`]);
+  return `${prefix}-${i}`;
+};
+
+const rootReducer: Reducer<IRootState> = (state, action) => {
+  switch (action.type) {
+    case 'ADD_NODE': {
+      const parentId: string | undefined = (action.payload as any).parentId;
+      if (!parentId) {
+        const id = getNextId(state, `node`);
+        return { ...state, allNodes: { ...state.allNodes, [id]: [] }, rootNodes: [...state.rootNodes, id] };
+      }
+
+      const id = getNextId(state, parentId);
+      return { ...state, allNodes: { ...state.allNodes, [id]: [], [parentId]: [...state.allNodes[parentId], id] } };
+    }
+  }
+  return state;
+};
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ReduxContextProvider initialState={initialState} rootReducer={rootReducer}>
+      <App />
+    </ReduxContextProvider>
+    <ReduxContextProvider initialState={initialState} rootReducer={rootReducer}>
+      <App />
+    </ReduxContextProvider>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById('root'),
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

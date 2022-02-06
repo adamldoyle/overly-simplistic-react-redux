@@ -1,25 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useProvidedContext } from '@adamldoyle/use-provided-context';
+import { IRootState } from './types';
+import { Node } from './components/node';
+import { ReduxContext } from './redux/context';
+import { useDispatch } from './redux/useDispatch';
+import { useSelector } from './redux/useSelector';
 
 function App() {
+  const { store } = useProvidedContext(ReduxContext);
+  const dispatch = useDispatch();
+  const nodes = useSelector<IRootState, string[]>((state) => state.rootNodes);
+
+  const logStore = () => {
+    console.log(store);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div>
+        <button onClick={() => dispatch({ type: 'ADD_NODE', payload: {} })}>add node</button>
+      </div>
+      <div style={{ display: 'flex' }}>
+        {nodes.map((nodeId) => (
+          <Node key={nodeId} id={nodeId} />
+        ))}
+      </div>
+      <div>
+        <button onClick={logStore}>log store</button>
+      </div>
+    </>
   );
 }
 
