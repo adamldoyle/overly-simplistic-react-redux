@@ -39,9 +39,6 @@ ReactDOM.render(
     <ReduxContextProvider initialState={initialState} rootReducer={rootReducer}>
       <App />
     </ReduxContextProvider>
-    <ReduxContextProvider initialState={initialState} rootReducer={rootReducer}>
-      <App />
-    </ReduxContextProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );
